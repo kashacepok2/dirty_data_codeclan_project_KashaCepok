@@ -1,0 +1,51 @@
+---
+title: "Decathlon data analysis"
+output: html_notebook
+---
+
+```{r}
+source("clean_data/Decathlon_data_clean.R")
+```
+
+```{r}
+glimpse(decathlon_clean)
+```
+
+Who has the longest long jump?
+```{r}
+decathlon_clean %>% 
+  filter(event == "long_jump") %>%
+  arrange(event) %>% 
+  head(1)
+```
+What was the avg 100m time in each competition?
+```{r}
+decathlon_clean %>% 
+  filter(event == "100m") %>% 
+  group_by(competition) %>% 
+  summarise(mean_time_s = mean(result))
+```
+Who hs the highest total points across both competitions?
+
+```{r}
+decathlon_clean %>% 
+  group_by(name) %>% 
+  summarise(total_points = sum(points)) %>% 
+  slice_max(total_points, n = 1)
+```
+What was the shotput scores for the top three competitors in each competition?
+```{r}
+decathlon_clean %>% 
+  filter(event == "shot_put") %>% 
+  group_by(competition) %>% 
+  slice_max(points, n = 3)
+```
+
+What was the average points for competitors who ran the 400m in less than 50 seconds vs. those than ran 400m in more than 50 seconds?
+```{r}
+decathlon_clean %>% 
+  filter(event == "400m") %>% 
+  group_by("time_<_50s" = result < 50) %>% 
+  summarise(average_points = mean(points))
+```
+
