@@ -5,7 +5,7 @@ output:
     df_print: paged
 ---
 
-The data was taken from the results of 2 decathlons and the performance of the participants. The data was cleaned by first cleaning the column names and then changing the row names into a column. The data in this column was changed to title case as they were names, and the columns of events were pivoted into 2 columns of events and the participants result in the event. 
+The data was taken from an online psychometric test on how much an individual identified with the right wing authoritarian ideology. The data was cleaned by cleaning the column names, removing unnecessary columns, filtering for valid test results, and then replacing the data values with their text equivalents to make the data easy to interpret. We assumed that anyone who had ticked questions vcl6, vcll9 and vcl2 were not answering truthfully and so were removed from the data.
 
 ```{r}
 library(tidyverse)
