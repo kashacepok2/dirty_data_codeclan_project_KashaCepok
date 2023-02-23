@@ -1,0 +1,110 @@
+---
+title: "RWA analysis"
+output:
+  html_document:
+    df_print: paged
+---
+
+The data was taken from the results of 2 decathlons and the performance of the participants. The data was cleaned by first cleaning the column names and then changing the row names into a column. The data in this column was changed to title case as they were names, and the columns of events were pivoted into 2 columns of events and the participants result in the event. 
+
+```{r}
+library(tidyverse)
+library(dplyr)
+
+source("data_cleaning_scripts/rwa_data_cleaning.R")
+glimpse(rwa_clean)
+```
+
+  
+What’s the average RWA score for each gender?
+```{r}
+rwa_clean %>% 
+  group_by(gender) %>% 
+  summarise(mean(total_rwa_score))
+```
+answer: 
+Female - 49.6
+Male - 60.4
+Other - 36.4
+
+What’s the average RWA score for left handed people vs. right handed people?
+```{r}
+rwa_clean %>% 
+  filter(hand == "Left" | hand == "Right") %>% 
+  group_by(hand) %>% 
+  summarise(mean(total_rwa_score))
+```
+answer:
+Left - 56.0
+Right - 56.2
+
+What’s the average family size for each type of childhood?
+```{r}
+rwa_clean %>% 
+  group_by(urban) %>% 
+  summarise(mean(familysize))
+```
+answer:
+Rural - 2.8 children
+Suburban - 2.6 children
+Urban - 2.4 children
+
+What’s the average time to take the test for each education level?
+```{r}
+rwa_clean %>%
+  group_by(education) %>% 
+  summarise(mean(testelapse))
+```
+answer:
+University degree - 613 seconds
+Graduate degree - 328 seconds
+High school - 495 seconds
+Less than high school - 386 seconds
+
+Create a plot of results of question 4.
+```{r}
+test_time <- c(386, 495, 328, 613)
+
+barplot(test_time, col = "pink", xlab = "education level", ylab = "time (s)",
+        names.arg = c("Less than high school", " High school", "Graduate degree", "University degree"))
+
+```
+What’s the average RWA score for people aged:
+
+- under 18
+- 18 - 25
+- 26 - 40
+- 41 - 60
+- over 60
+ 
+
+```{r}
+rwa_clean %>% 
+  mutate(age_range = case_when(
+    age < 18 ~ "less than 18",
+    age > 17 & age < 25 ~ "18 - 25",
+    age > 25 & age < 41 ~ "26 - 40",
+    age > 40 & age < 61 ~ "41-60",
+    age > 60 ~ "over 60"
+  )) %>% 
+  group_by(age_range) %>% 
+  summarise(average_rwa_score = mean(total_rwa_score))
+```
+answer:
+
+under 18 - 66.1
+18 - 25 - 62.1
+26 - 40 - 51.0
+41 - 60 - 50.2
+over 60 - 47.4
+
+
+```{r}
+average_rwa <- c(66.1, 62.1, 51.0, 50.2, 47.4)
+
+
+barplot(average_rwa, col = "pink", xlab = "age range", ylab = "average rwa score",
+     names.arg = c("under 18", "18 - 25", "26 - 40", "41-60", "over 60"))
+```
+
+
