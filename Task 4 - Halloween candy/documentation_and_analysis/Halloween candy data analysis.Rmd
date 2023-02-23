@@ -1,0 +1,114 @@
+---
+title: "Task 4 - Halloween candy analysis"
+output: html_notebook
+---
+
+The data was taken from an online survey on whether participants would feel "joy","despair" or "meh" at getting certain items in their trick or treating bag at Halloween. It came in 3 different tables from 3 years (2015, 2016 and 2017). The data was cleaned by cleaning the column names of the individual tables and ensuring they match, along with removing unnecessary data. The tables were then joined and some columns were aggregated for easier reading, and checked for outlying values. Finally, more unnecessary columns were removed, and the types of candy columns were pivoted to create two columns, type of candy and rating.
+
+```{r}
+library(tidyverse)
+library(dplyr)
+
+source("data_cleaning_scripts/Halloween_candy_cleaning.R")
+```
+
+What is the total number of candy ratings given across the three years?
+
+```{r}
+candy_all_clean %>% 
+  drop_na(rating) %>% 
+  nrow()
+```
+answer: 583964 ratings
+
+What was the average age of people who are going out trick or treating?
+```{r}
+candy_all_clean %>% 
+  drop_na(age) %>% 
+  summarise(mean(age))
+```
+answer: 38.7 years old
+
+What was the average age of people who are not going trick or treating?
+```{r}
+candy_all_clean %>% 
+  group_by(going_trick_or_treating) %>% 
+  summarise(mean(age))
+```
+answer: 39.1 years old
+
+
+For each of joy, despair and meh, which candy bar received the most of these ratings?
+```{r}
+candy_all_clean %>% 
+  drop_na(rating) %>% 
+  group_by(candy, rating) %>% 
+  summarise(rating_count = n()) %>% 
+  group_by(rating) %>% 
+  slice_max(rating_count, n = 1)
+```
+answer: most Joys: any full sized candy bar - 7243
+most mehs: lollipop - 1507
+most despairs: gum from baseball card - 6989
+
+How many people rated Starburst as despair?
+```{r}
+candy_all_clean %>% 
+  filter(candy == "starburst", rating == "DESPAIR") %>% 
+  nrow()
+```
+answer: 1865 people rated starburst as despair
+
+rating system: +1 for joy, 0 for meh and -1 for despair 
+
+What was the most popular candy bar by this rating system for each gender in the dataset?
+
+```{r}
+candy_clean_rating <- candy_all_clean %>% 
+  mutate(rating_value = case_when(
+    rating == "JOY" ~ 1,
+    rating == "MEH" ~ 0,
+    rating == "DESPAIR" ~ -1
+))
+```
+
+```{r}
+candy_clean_rating %>%
+  drop_na(rating) %>% 
+  group_by(gender, candy) %>% 
+  summarise(total_rating = sum(rating_value)) %>% 
+  group_by(gender) %>% 
+  slice_max(total_rating, n = 1)
+```
+answer:
+Female - any full sized candy bar - 855
+Male - any full sized candy bar - 1533
+I'd rather not say - any full sized candy bar - 48
+Other - any full sized candy bar - 35
+
+What was the most popular candy bar in each year?
+```{r}
+candy_clean_rating %>%
+  drop_na(rating) %>% 
+  group_by(year, candy) %>% 
+  summarise(total_rating = sum(rating_value)) %>% 
+  group_by(year) %>% 
+  slice_max(total_rating, n = 1)
+```
+answer: any full sized candy bar - all years
+
+What was the most popular candy bar by this rating for people in US, Canada, UK, and all other countries?
+
+```{r}
+candy_clean_rating %>%
+  drop_na(rating) %>% 
+  group_by(country, candy) %>% 
+  summarise(total_rating = sum(rating_value)) %>% 
+  group_by(country) %>% 
+  slice_max(total_rating, n = 1)
+```
+answer: 
+USA - any full sized candy bar - 2036
+UK - toblerone something or other - 25
+Canada - mars - 42
+other - any full sized candy bar - 4768
