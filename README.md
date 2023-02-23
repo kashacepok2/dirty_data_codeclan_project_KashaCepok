@@ -18,7 +18,7 @@ finding the results of specific athletes.
 The data was taken from an online survey on whether participants would feel "joy","despair" or "meh" at getting certain items in their trick or treating bag at
 halloween. It came in 3 different tables from 3 years (2015, 2016 and 2017). The data was cleaned by cleaning the column names of the individual tables and
 ensuring they match, along with removing unneccessary data. The tables were then joined and some columns were aggregated for easier reading, and checked for
-outlying values. Finally, more unneccessary columns were removed, and the types of candy columns were pivoted to create two columns, type of candy and rating.
+outlying values. Finally, more unneccessary columns were removed, and the types of candy columns were pivoted to create two columns, type of candy and rating. When aggregating the different inputs for "country" some of the inputs had to be assumed to be in reference to a certain country. It was also assumed a lot of items were joke questions and we would not actually expect anyone to give them out to trick or treaters at halloween, and were thus removed.
 
 In the analysis we answered questions on the age demographic of participants, along with the popularity of different candies and their popularity within
 different demographics.
