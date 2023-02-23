@@ -3,6 +3,10 @@ title: "Decathlon data analysis"
 output: html_notebook
 ---
 
+The data was taken from the results of 2 decathlons and the performance of the participants. The data was cleaned by first cleaning the column names and then
+changing the row names into a column. The data in this column was changed to title case as they were names, and the columns of events were pivoted into 2 columns
+of events and the participants result in the event.
+
 ```{r}
 source("clean_data/Decathlon_data_clean.R")
 ```
@@ -25,7 +29,7 @@ decathlon_clean %>%
   group_by(competition) %>% 
   summarise(mean_time_s = mean(result))
 ```
-Who hs the highest total points across both competitions?
+Who has the highest total points across both competitions?
 
 ```{r}
 decathlon_clean %>% 
